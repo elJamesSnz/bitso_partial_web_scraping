@@ -80,11 +80,7 @@ News.getNews = () => {
   return data;
 };
 
-News.add = (news_model) => {
-  let res = {
-    success: false,
-    data: undefined,
-  };
+News.create = (news_model) => {
   var Model = new NewsModel();
   Model.author = news_model.author;
   Model.title = news_model.title;
@@ -96,14 +92,9 @@ News.add = (news_model) => {
   Model.save((err, data) => {
     if (err) {
       console.error(err);
-      res.success = false;
-      res.data = err;
-      return res;
+      throw "Error en news.js create";
     } else {
-      console.log(data);
-      res.success = true;
-      res.data = data;
-      return res;
+      return data;
     }
   });
 };

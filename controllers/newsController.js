@@ -48,18 +48,13 @@ module.exports = {
   async add(req, res, next) {
     try {
       const data = req.body;
-      const response = await News.add(data);
-      if (response.success) return res.status(201).json(data);
-      else
-        return res.status(501).json({
-          success: false,
-          message: "Error al obtener todos los usuarios",
-        });
+      const response = await News.create(data);
+      return res.status(201).json(response);
     } catch (error) {
-      console.log(`Error: ${error}`);
+      console.log(`Error {Add}: ${error}`);
       return res.status(501).json({
         success: false,
-        message: "Error al obtener todos los usuarios",
+        message: "Error al agregar la noticia",
       });
     }
   },
