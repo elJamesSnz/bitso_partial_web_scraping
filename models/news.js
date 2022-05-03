@@ -8,13 +8,29 @@ const NewsModel = require("../db/db");
 
 const News = {};
 
-News.getBitsoLinks = () => {
-  let news_links = {
-    links: [],
-  };
+let final_links = {
+  enlaces: [],
 };
 
-News.getBitNewsByUri = ($) => {
+News.create = (news_model) => {
+  var Model = new NewsModel();
+  Model.author = news_model.author;
+  Model.title = news_model.title;
+  Model.subtitle = news_model.subtitle;
+  Model.intro = news_model.intro;
+  Model.sections = news_model.sections;
+  Model.uri = news_model.uri;
+
+  Model.save((err, data) => {
+    if (err) {
+      //console.error(err);
+    } else {
+      //return data;
+    }
+  });
+};
+
+News.getBitNewsByUri = ($, URLi) => {
   let news_model = {
     author: "",
     title: "",
@@ -57,17 +73,65 @@ News.getBitNewsByUri = ($) => {
             text += el.text() + "\n";
           }
           news_sections.text = text;
-          console.log(i, text);
           if (news_sections.text.length > 0) {
             news_model.sections.push(news_sections);
           }
         }
       })
       .get();
-
-    console.log(news_model);
-    News.add(news_model);
+    News.create(news_model);
   });
+};
+
+News.exists = (news_model) => {
+  var Model = new NewsModel();
+
+  news_model.links.forEach(async (link) => {
+    Model.title = link.enlace;
+    var enlace = link.enlace;
+    //const data = await Model.exists({ title: link.titulo });
+    NewsModel.exists({ title: link.titulo }, async function (err, result) {
+      if (!result) {
+        console.log(enlace);
+        final_links.enlaces.push(enlace);
+
+        const $ = await request({
+          uri: enlace,
+          //transformar datos que se pasa a cheerio enviando el body
+          transform: (body) => cheerio.load(body),
+        });
+
+        News.getBitNewsByUri($, enlace);
+      } else {
+        if (err) {
+          throw "Error al buscar las noticias {exists}";
+        }
+      }
+    });
+  });
+};
+
+News.getBitsoLinks = ($) => {
+  let news_links = {
+    links: [],
+  };
+
+  const article2 = $("a h3").each((i, el) => {
+    let links_model = {
+      titulo: "",
+      enlace: "",
+    };
+
+    const link = $(el).parent().attr("href");
+    const titulo = $(el).text();
+
+    links_model.titulo = titulo;
+    links_model.enlace = link;
+    news_links.links.push(links_model);
+  });
+
+  console.log("LINKS OBTENIDOS");
+  News.exists(news_links);
 };
 
 News.getNews = () => {
@@ -78,25 +142,6 @@ News.getNews = () => {
   };
 
   return data;
-};
-
-News.create = (news_model) => {
-  var Model = new NewsModel();
-  Model.author = news_model.author;
-  Model.title = news_model.title;
-  Model.subtitle = news_model.subtitle;
-  Model.intro = news_model.intro;
-  Model.sections = news_model.sections;
-  Model.uri = news_model.uri;
-
-  Model.save((err, data) => {
-    if (err) {
-      console.error(err);
-      throw "Error en news.js create";
-    } else {
-      return data;
-    }
-  });
 };
 
 //objeto para el controlador

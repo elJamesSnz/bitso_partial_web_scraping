@@ -8,7 +8,7 @@ const fs = require("fs-extra");
 const writeStream = fs.createWriteStream("quotes.csv");
 
 const URLi =
-  "https://blog.bitso.com/solana-sol-lleg%C3%B3-a-bitso-904e777d597b";
+  "https://blog.bitso.com/quant-qnt-lleg%C3%B3-a-bitso-22400ea173c3?source=collection_home---4------1-----------------------";
 
 //función que arranca script
 async function init() {
@@ -60,7 +60,7 @@ async function init() {
             text += el.text() + "\n";
           }
           news_sections.text = text;
-          console.log(i, text);
+          //console.log(i, text);
           if (news_sections.text.length > 0) {
             news_model.sections.push(news_sections);
           }

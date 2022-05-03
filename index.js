@@ -5,16 +5,12 @@ const http = require("http");
 const server = http.createServer(app);
 const logger = require("morgan");
 const cors = require("cors");
-
 //traer dependencia de request-promise
 const request = require("request-promise");
 //traer módulo de mongoDB
 const mongoose = require("mongoose");
 //traer el módulo db
 const db = require("./config/config");
-
-const URLi =
-  "https://blog.bitso.com/solana-sol-lleg%C3%B3-a-bitso-904e777d597b";
 
 const news = require("./routes/newsRoutes");
 const port = process.env.PORT || 3000;
@@ -40,9 +36,10 @@ mongoose
     console.info("Connected to the DB");
   })
   .catch((e) => {
-    console.log("Error:", e);
+    console.log("Error: {db connection}", e);
   });
 
+//Se establecen las rutas
 news(app);
 
 //ipconfig -> ipv4

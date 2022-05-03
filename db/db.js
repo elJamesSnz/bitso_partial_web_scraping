@@ -10,11 +10,13 @@ const newsSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: false,
+    unique: true,
   },
   subtitle: {
     type: String,
     required: true,
     trim: false,
+    unique: true,
   },
   intro: {
     type: String,
